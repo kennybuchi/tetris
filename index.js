@@ -2,6 +2,7 @@
 var width = 10;
 var height = 20;
 var tilesize = 24;
+var speed = 500;
 
 //other vars
 var canvas = document.getElementById("board");
@@ -263,6 +264,7 @@ Piece.prototype.rotate = function() {
   }
 };
 
+//checks for collision
 Piece.prototype._collides = function(dx, dy, pat) {
 	for (let i = 0; i < pat.length; i++) {
 		for (let j = 0; j < pat.length; j++) {
@@ -310,6 +312,7 @@ Piece.prototype.draw = function(ctx) {
 	this._fill(this.color);
 };
 
+//Locks piece into place, checks for a line and game over,
 Piece.prototype.lock = function() {
 	for (let i = 0; i < this.orientation.length; i++) {
 		for (let j = 0; j < this.orientation.length; j++) {
@@ -355,23 +358,28 @@ Piece.prototype.lock = function() {
 
 //user input
 var timer = Date.now();
-document.body.addEventListener('keypress', function (e) {
-  if (e.keycode == 90) { // z
-    piece.rotate();
-    timer = Date.now();
-  }
-  if (e.keyCode == 40) { // down
-		console.log("down");
-		piece.down();
-    //timer = Date.now();
-	}
-	if (e.keyCode == 37) { // left
-		piece.moveLeft();
-		timer = Date.now();
-	}
-	if (e.keyCode == 39) { // right
-		piece.moveRight();
-		timer = Date.now();
+
+document.body.addEventListener('keydown', function (e) {
+  console.log(e);
+  switch (e.keyCode) {
+    case 90: // z
+      piece.rotate();
+      timer = Date.now();
+      break;
+
+    case 40: // down
+  		console.log("down");
+  		piece.down();
+      break;
+
+  	case 37: // left
+  		piece.moveLeft();
+  		timer = Date.now();
+      break;
+
+  	case 39:  // right
+  		piece.moveRight();
+  		timer = Date.now();
   }
 }, false);
 
@@ -388,7 +396,7 @@ function main() {
   var clock = Date.now();
   var delta = clock - timer;
 
-  if (delta > 1000) { //1 second
+  if (delta > speed) { //1 second
     piece.down();
     timer = clock;
   }
