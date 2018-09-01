@@ -360,7 +360,6 @@ Piece.prototype.lock = function() {
 var timer = Date.now();
 
 document.body.addEventListener('keydown', function (e) {
-  console.log(e);
   switch (e.keyCode) {
     case 90: // z
       piece.rotate();
@@ -368,7 +367,6 @@ document.body.addEventListener('keydown', function (e) {
       break;
 
     case 40: // down
-  		console.log("down");
   		piece.down();
       break;
 
