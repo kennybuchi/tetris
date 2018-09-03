@@ -17,6 +17,7 @@ var swappiece = null;
 //sound player(s)
 var gamesound = "http://k003.kiwi6.com/hotlink/3jx93tmrss/gang.mp3";
 var gamemp = new Audio(gamesound);
+gamemp.load();
 gamemp.volume = 0.2;
 
 var ggsound = "http://k003.kiwi6.com/hotlink/lwx52lah63/intolerable.wav";
@@ -405,6 +406,7 @@ document.body.addEventListener('keydown', function (e) {
   }
   switch (e.keyCode) {
     case 13: //start
+	  boardReset();
       main();
       break;
       
