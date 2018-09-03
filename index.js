@@ -14,6 +14,20 @@ var score = 0;
 var piece = null;
 var swappiece = null;
 
+//sound player(s)
+var gamesound = "http://k003.kiwi6.com/hotlink/3jx93tmrss/gang.mp3";
+var gamemp = new Audio(gamesound);
+gamemp.volume = 0.2;
+
+var ggsound = "http://k003.kiwi6.com/hotlink/lwx52lah63/intolerable.wav";
+var ggmp = new Audio(ggsound);
+
+var dropsound = "http://k003.kiwi6.com/hotlink/fxdioyp4k1/dropsound.mp3";
+var dropmp = new Audio(dropsound);
+
+var linesound = "http://k003.kiwi6.com/hotlink/lkqr402hq7/3brothers.wav";
+var linemp = new Audio(linesound);
+
 //tetronimoes
 var I = [
   [
@@ -328,6 +342,10 @@ Piece.prototype.draw = function(ctx) {
 
 //Locks piece into place, checks for a line and game over,
 Piece.prototype.lock = function() {
+  dropmp.pause();
+  dropmp = new Audio(dropsound);
+  dropmp.play();
+  
 	for (let i = 0; i < this.orientation.length; i++) {
 		for (let j = 0; j < this.orientation.length; j++) {
 			if (!this.orientation[i][j]) {
@@ -336,7 +354,9 @@ Piece.prototype.lock = function() {
 
 			if (this.y + j < 0) {
 				// Game ends!
-				alert("GG");
+        gamemp.pause();
+        gamemp = new Audio(gamesound);
+        ggmp.play();
 				done = true;
 				return;
 			}
@@ -348,7 +368,7 @@ Piece.prototype.lock = function() {
 	for (let y = 0; y < height; y++) {
 		var line = true;
 		for (let x = 0; x < width; x++) {
-			line = line && !board[y][x];
+			line = line && board[y][x];
 		}
 		if (line) {
 			for (let y2 = y; y2 > 1; y2--) {
@@ -364,6 +384,9 @@ Piece.prototype.lock = function() {
 	}
 
   if (nlines > 0) {
+    linemp.pause();
+    linemp = new Audio(linesound);
+    linemp.play();
 		score += nlines;
 		drawBoard();
 	}
@@ -374,6 +397,12 @@ Piece.prototype.lock = function() {
 var timer = Date.now();
 
 document.body.addEventListener('keydown', function (e) {
+  if (done && e.keyCode == 13) {
+    boardReset();
+    drawBoard();
+    done = false;
+    return;
+  }
   switch (e.keyCode) {
     case 13: //start
       main();
@@ -412,11 +441,19 @@ document.body.addEventListener('keydown', function (e) {
 
 //initialize board
 var board = [];
-for (let i=0; i < height; i++) {
-  board[i] = [];
-  for (let j=0; j < width; j++) {
-    board[i][j] = '';
+
+function boardReset() {
+  for (let i=0; i < height; i++) {
+    board[i] = [];
+    for (let j=0; j < width; j++) {
+      board[i][j] = '';
+    }
   }
+  
+  gamemp.pause();
+  gamemp = new Audio(gamesound);
+  gamemp.volume = 0.2;
+  gamemp.play();
 }
 
 function main() {
@@ -433,6 +470,7 @@ function main() {
   }
 }
 
+boardReset();
 piece = newPiece();
 drawBoard();
 //main();
