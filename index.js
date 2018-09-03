@@ -13,21 +13,26 @@ var done = false;
 var score = 0;
 var piece = null;
 var swappiece = null;
+var mute = true;
 
 //sound player(s)
 var gamesound = "http://k003.kiwi6.com/hotlink/3jx93tmrss/gang.mp3";
 var gamemp = new Audio(gamesound);
 gamemp.load();
-gamemp.volume = 0.2;
+gamemp.volume = 0;
+gamemp.loop = true;
 
 var ggsound = "http://k003.kiwi6.com/hotlink/lwx52lah63/intolerable.wav";
 var ggmp = new Audio(ggsound);
+ggmp.volume = 0;
 
 var dropsound = "http://k003.kiwi6.com/hotlink/fxdioyp4k1/dropsound.mp3";
 var dropmp = new Audio(dropsound);
+dropmp.volume = 0;
 
 var linesound = "http://k003.kiwi6.com/hotlink/lkqr402hq7/3brothers.wav";
 var linemp = new Audio(linesound);
+linemp.volume = 0;
 
 //tetronimoes
 var I = [
@@ -195,6 +200,7 @@ var pieces = [
 ];
 
 //functions
+	
 function drawSquare(x, y) {
   ctx.fillRect(x * tilesize, y * tilesize, tilesize, tilesize);
   ss = ctx.strokeStyle;
@@ -344,7 +350,7 @@ Piece.prototype.draw = function(ctx) {
 //Locks piece into place, checks for a line and game over,
 Piece.prototype.lock = function() {
   dropmp.pause();
-  dropmp = new Audio(dropsound);
+  dropmp.load();
   dropmp.play();
   
 	for (let i = 0; i < this.orientation.length; i++) {
@@ -356,7 +362,7 @@ Piece.prototype.lock = function() {
 			if (this.y + j < 0) {
 				// Game ends!
         gamemp.pause();
-        gamemp = new Audio(gamesound);
+        gamemp.load();
         ggmp.play();
 				done = true;
 				return;
@@ -386,7 +392,7 @@ Piece.prototype.lock = function() {
 
   if (nlines > 0) {
     linemp.pause();
-    linemp = new Audio(linesound);
+    linemp.load();
     linemp.play();
 		score += nlines;
 		drawBoard();
@@ -404,9 +410,12 @@ document.body.addEventListener('keydown', function (e) {
     done = false;
     return;
   }
+  if ([32, 37, 38, 39, 40].indexOf(e.keyCode) > 1) {
+    e.preventDefault();
+  }
   switch (e.keyCode) {
     case 13: //start
-	  boardReset();
+      boardReset();
       main();
       break;
       
@@ -453,8 +462,7 @@ function boardReset() {
   }
   
   gamemp.pause();
-  gamemp = new Audio(gamesound);
-  gamemp.volume = 0.2;
+  gamemp.load();
   gamemp.play();
 }
 
