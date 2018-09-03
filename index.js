@@ -2,7 +2,7 @@
 var width = 10;
 var height = 20;
 var tilesize = 24;
-var speed = 500;
+var speed = 1000;
 
 //other vars
 var canvas = document.getElementById("board");
@@ -12,6 +12,7 @@ canvas.height = height * tilesize;
 var done = false;
 var score = 0;
 var piece = null;
+var swappiece = null;
 
 //tetronimoes
 var I = [
@@ -171,7 +172,7 @@ var T = [
 var pieces = [
 	[I, "red"],
 	[J, "orange"],
-	[L, "yellow"],
+	[L, "gold"],
 	[O, "green"],
 	[S, "blue"],
 	[T, "purple"],
@@ -209,9 +210,22 @@ function Piece(type, color) {
   this.orientation = type[this.i];
 
   this.color = color;
-
+  
   this.x = width/2-parseInt(Math.ceil(this.orientation.length/2), 10);;
   this.y = -2;
+}
+
+function SwapPieces() {
+  if (!swappiece) {
+    swappiece = newPiece();
+  }
+  piece.undraw();
+  piece.y = -2;
+
+  var temppiece = piece;
+  piece = swappiece;
+  swappiece = temppiece;
+  piece.draw();
 }
 
 Piece.prototype.draw = function() {
@@ -361,23 +375,38 @@ var timer = Date.now();
 
 document.body.addEventListener('keydown', function (e) {
   switch (e.keyCode) {
-    case 90: // z
+    case 13: //start
+      main();
+      break;
+      
+    case 38: // up
       piece.rotate();
       timer = Date.now();
       break;
 
+    case 32: // space
+      var piecetemp = piece;
+      while (piece == piecetemp) {
+  		  piece.down();
+      }
+      break;
+    
+    case 90: // z
+      SwapPieces();
+      break;
+      
     case 40: // down
   		piece.down();
       break;
 
   	case 37: // left
   		piece.moveLeft();
-  		timer = Date.now();
+  		timer = Date.now() - speed/2;
       break;
 
   	case 39:  // right
   		piece.moveRight();
-  		timer = Date.now();
+  		timer = Date.now() - speed/2;
   }
 }, false);
 
@@ -394,7 +423,7 @@ function main() {
   var clock = Date.now();
   var delta = clock - timer;
 
-  if (delta > speed) { //1 second
+  if (delta > speed) { 
     piece.down();
     timer = clock;
   }
@@ -406,4 +435,4 @@ function main() {
 
 piece = newPiece();
 drawBoard();
-main();
+//main();
